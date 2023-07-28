@@ -39,17 +39,32 @@ Total profit = 4 + 8 = 12.
 
 class Solution:
     def stonks(self, prices):
-        min_price = float('inf')
+        if not prices or len(prices) < 2:
+            return 0
+
+        n = len(prices)
+        max_profit_forward = [0] * n
+        max_profit_backward = [0] * n
+
+        min_price = prices[0]
+        for i in range(1, n):
+            max_profit_forward[i] = max(max_profit_forward[i - 1], prices[i] - min_price)
+            min_price = min(min_price, prices[i])
+
+        max_price = prices[-1]
+        for i in range(n - 2, -1, -1):
+            max_profit_backward[i] = max(max_profit_backward[i + 1], max_price - prices[i])
+            max_price = max(max_price, prices[i])
+
         max_profit = 0
-        
-        for price in prices:
-            min_price = min(min_price, price)
-            max_profit = max(max_profit, price - min_price)
-        
+        for i in range(n):
+            max_profit = max(max_profit, max_profit_forward[i] + max_profit_backward[i])
+
         return max_profit
+
 def main():
     array = input().split(" ")
-    for x in range (0, len(array)):
+    for x in range(len(array)):
         array[x] = int(array[x])
 
     tc1 = Solution()
